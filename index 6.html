@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive English Lesson</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+
+        /* Story/Paragraph Section */
+        .story-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lesson-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+
+        /* Enhanced story-text for better readability */
+        .story-text {
+            font-size: 18px;
+            text-align: justify;
+            line-height: 1.8;
+            white-space: pre-line; /* Allows both paragraph and conversation styles */
+            text-indent: 30px;
+        }
+
+        /* Emoji Animations */
+        .walking-elephant {
+            font-size: 30px;
+            position: absolute;
+            top: 10px;
+            left: -50px;
+            animation: walkAcross 15s linear infinite;
+        }
+
+        .flying-butterfly {
+            font-size: 25px;
+            position: absolute;
+            right: 20px;
+            top: 50px;
+            animation: flyAround 12s ease-in-out infinite;
+        }
+
+        @keyframes walkAcross {
+            0% { transform: translateX(-50px); }
+            100% { transform: translateX(850px); }
+        }
+
+        @keyframes flyAround {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(20px) rotate(-5deg); }
+        }
+
+        /* Tooltip Styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            font-weight: bold;
+            cursor: help;
+            transition: all 0.3s ease;
+            color: #2980b9;
+        }
+
+        .tooltip:hover {
+            color: #e74c3c;
+            transform: scale(1.1);
+            text-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 14px;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #2c3e50 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .ipa {
+            font-weight: bold;
+            color: #f1c40f;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Difficult Words Section */
+        .difficult-words {
+            background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .word-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .word-item {
+            background-color: #fff;
+            padding: 12px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: help;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            margin: 8px;
+            border: 2px solid transparent;
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .word-item::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee);
+            background-size: 400% 400%;
+            z-index: -1;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .word-item:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            color: #fff;
+        }
+
+        .word-item:hover::before {
+            opacity: 1;
+            animation: gradientGlow 3s ease infinite;
+        }
+
+        @keyframes gradientGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .word-item:active {
+            transform: scale(0.95);
+            animation: bounce 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Listening Options Section */
+        .listening-section {
+            background: linear-gradient(135deg, #fff9c4 0%, #ffecb3 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .audio-player {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        audio {
+            width: 100%;
+            outline: none;
+        }
+
+        .audio-title {
+            color: #5d4037;
+            margin-bottom: 15px;
+        }
+
+        /* Practice Section */
+        .practice-words {
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .practice-list {
+            list-style-type: none;
+            padding: 0;
+            columns: 2;
+        }
+
+        .practice-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .practice-list li::before {
+            content: "•";
+            color: #2e7d32;
+            font-size: 20px;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .practice-list {
+                columns: 1;
+            }
+            
+            .word-list {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .word-item {
+                padding: 10px 15px;
+                min-width: 100px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Story/Paragraph Section -->
+    <div class="story-container">
+        <div class="walking-elephant">🛒</div>
+        <div class="flying-butterfly">🛍️</div>
+       <h1 class="lesson-title">A Shopping Day!</h1>
+<p class="story-text" id="lesson-paragraph">
+    <strong>Sarah:</strong> Hi, Ben and Lily! What are we shopping for today?<br><br>
+    <strong>Ben:</strong> I need to buy a new backpack. Mine is too old, and the straps are broken.<br><br>
+    <strong>Lily:</strong> Oh no, Ben! You really need a new one. What color are you thinking about?<br><br>
+    <strong>Ben:</strong> Hmm, maybe black or blue. Something simple.<br><br>
+    <strong>Sarah:</strong> Black is a good choice! It matches everything.<br><br>
+    <strong>Lily:</strong> True, but blue is nice, too. It’s more cheerful. What about you, Sarah? Looking for anything?<br><br>
+    <strong>Sarah:</strong> Maybe a dress or some accessories. I saw a store with a big sale earlier.<br><br>
+    <strong>Lily:</strong> That sounds fun! I need to check out the shoes. There’s a fifty-percent discount in that shop over there.<br><br>
+    <strong>Ben:</strong> Wow, a discount? Let’s go! But first, I’m so thirsty. Can we grab a drink at the café?<br><br>
+    <strong>Sarah:</strong> Sure, we can sit down for a bit and plan where to shop next.<br><br>
+    <strong>Lily:</strong> Perfect. The café on the second floor has great smoothies.<br><br>
+    <strong>Ben:</strong> Smoothies sound great! Then we can head to the shoe store and find your backpack, Lily’s shoes, and Sarah’s dress.<br><br>
+    <strong>Sarah:</strong> Sounds like a plan! Let’s go before it gets crowded.<br><br>
+</p>
+    </div>
+
+    <!-- Listening Options Section -->
+    <div class="listening-section">
+        <h2 class="audio-title">Listen to the Story</h2>
+        <div class="audio-player">
+            <audio id="audio-player" controls preload="none">
+                Your browser does not support the audio element.
+            </audio>
+            <div style="margin-top: 10px; font-style: italic; color: #5d4037;">
+                Narrated by Yon Daravuth
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Replace this link with any original Dropbox link you copy
+        const originalDropboxLink = "https://www.dropbox.com/scl/fi/2jddt1c0j6kwvfc7l51nh/Yon-Daravuth-A-Shopping-Day-Speaking-listening-Practice.m4a?rlkey=jhnam9118a0tkgjg61nayw757&st=g3k9u1pe&dl=0";
+
+        // Convert to streamable format
+        const streamableLink = originalDropboxLink.replace("dl=0", "raw=1");
+
+        // Set to audio player
+        document.getElementById("audio-player").src = streamableLink;
+    </script>
+
+    <!-- Difficult Words Section -->
+<div class="difficult-words">
+    <h2>Difficult Words</h2>
+    <div class="word-list" id="difficult-words-list">
+        <div class="word-item" data-word="aboard" data-ipa="/əˈbɔːrd/" data-definition="On or into an airplane, ship, bus, or train.">
+            aboard
+            <span class="tooltiptext"><span class="ipa">/əˈbɔːrd/</span>On or into an airplane, ship, bus, or train.</span>
+        </div>
+        <div class="word-item" data-word="boarding pass" data-ipa="/ˈbɔːrdɪŋ pæs/" data-definition="A document that allows a passenger to enter the airplane.">
+            boarding pass
+            <span class="tooltiptext"><span class="ipa">/ˈbɔːrdɪŋ pæs/</span>A document that allows a passenger to enter the airplane.</span>
+        </div>
+        <div class="word-item" data-word="luggage" data-ipa="/ˈlʌɡɪdʒ/" data-definition="Bags and suitcases used to carry belongings while traveling.">
+            luggage
+            <span class="tooltiptext"><span class="ipa">/ˈlʌɡɪdʒ/</span>Bags and suitcases used to carry belongings while traveling.</span>
+        </div>
+        <div class="word-item" data-word="fasten" data-ipa="/ˈfæsən/" data-definition="To secure or attach something firmly.">
+            fasten
+            <span class="tooltiptext"><span class="ipa">/ˈfæsən/</span>To secure or attach something firmly.</span>
+        </div>
+        <div class="word-item" data-word="seatbelt" data-ipa="/ˈsiːtbɛlt/" data-definition="A safety strap used in vehicles or airplanes to keep passengers secure.">
+            seatbelt
+            <span class="tooltiptext"><span class="ipa">/ˈsiːtbɛlt/</span>A safety strap used in vehicles or airplanes to keep passengers secure.</span>
+        </div>
+        <div class="word-item" data-word="tray table" data-ipa="/treɪ ˈteɪbəl/" data-definition="A small table attached to the seat in front of a passenger, used for eating or holding items.">
+            tray table
+            <span class="tooltiptext"><span class="ipa">/treɪ ˈteɪbəl/</span>A small table attached to the seat in front of a passenger, used for eating or holding items.</span>
+        </div>
+        <div class="word-item" data-word="take off" data-ipa="/teɪk ɒf/" data-definition="The action of an aircraft leaving the ground.">
+            take off
+            <span class="tooltiptext"><span class="ipa">/teɪk ɒf/</span>The action of an aircraft leaving the ground.</span>
+        </div>
+        <div class="word-item" data-word="landing" data-ipa="/ˈlændɪŋ/" data-definition="The act of an aircraft returning to the ground.">
+            landing
+            <span class="tooltiptext"><span class="ipa">/ˈlændɪŋ/</span>The act of an aircraft returning to the ground.</span>
+        </div>
+        <div class="word-item" data-word="local time" data-ipa="/ˈloʊkəl taɪm/" data-definition="The time according to the current location or time zone.">
+            local time
+            <span class="tooltiptext"><span class="ipa">/ˈloʊkəl taɪm/</span>The time according to the current location or time zone.</span>
+        </div>
+        <div class="word-item" data-word="menu" data-ipa="/ˈmenjuː/" data-definition="A list of food and drink options available to order.">
+            menu
+            <span class="tooltiptext"><span class="ipa">/ˈmenjuː/</span>A list of food and drink options available to order.</span>
+        </div>
+        <div class="word-item" data-word="vegetarian" data-ipa="/ˌvɛdʒɪˈtɛriən/" data-definition="A person who does not eat meat, or something suitable for such a person.">
+            vegetarian
+            <span class="tooltiptext"><span class="ipa">/ˌvɛdʒɪˈtɛriən/</span>A person who does not eat meat, or something suitable for such a person.</span>
+        </div>
+        <div class="word-item" data-word="option" data-ipa="/ˈɒpʃən/" data-definition="A choice or alternative.">
+            option
+            <span class="tooltiptext"><span class="ipa">/ˈɒpʃən/</span>A choice or alternative.</span>
+        </div>
+        <div class="word-item" data-word="headset" data-ipa="/ˈhɛdˌsɛt/" data-definition="A device worn on the head with headphones and a microphone, often for listening to audio.">
+            headset
+            <span class="tooltiptext"><span class="ipa">/ˈhɛdˌsɛt/</span>A device worn on the head with headphones and a microphone, often for listening to audio.</span>
+        </div>
+
+        <!-- New Difficult Words -->
+        <div class="word-item" data-word="backpack" data-ipa="/ˈbæk.pæk/" data-definition="A bag carried on the back, often used by travelers or students.">
+            backpack
+            <span class="tooltiptext"><span class="ipa">/ˈbæk.pæk/</span>A bag carried on the back, often used by travelers or students.</span>
+        </div>
+        <div class="word-item" data-word="straps" data-ipa="/stræps/" data-definition="Long narrow pieces used to hold or carry something, like on a bag.">
+            straps
+            <span class="tooltiptext"><span class="ipa">/stræps/</span>Long narrow pieces used to hold or carry something, like on a bag.</span>
+        </div>
+        <div class="word-item" data-word="accessories" data-ipa="/əkˈses.ər.iz/" data-definition="Extra items added to something to make it more useful or attractive.">
+            accessories
+            <span class="tooltiptext"><span class="ipa">/əkˈses.ər.iz/</span>Extra items added to something to make it more useful or attractive.</span>
+        </div>
+        <div class="word-item" data-word="cheerful" data-ipa="/ˈtʃɪə.fəl/" data-definition="Feeling or showing happiness and positivity.">
+            cheerful
+            <span class="tooltiptext"><span class="ipa">/ˈtʃɪə.fəl/</span>Feeling or showing happiness and positivity.</span>
+        </div>
+        <div class="word-item" data-word="discount" data-ipa="/ˈdɪs.kaʊnt/" data-definition="A reduction in the usual price of something.">
+            discount
+            <span class="tooltiptext"><span class="ipa">/ˈdɪs.kaʊnt/</span>A reduction in the usual price of something.</span>
+        </div>
+        <div class="word-item" data-word="thirsty" data-ipa="/ˈθɜːr.sti/" data-definition="Needing or wanting to drink something.">
+            thirsty
+            <span class="tooltiptext"><span class="ipa">/ˈθɜːr.sti/</span>Needing or wanting to drink something.</span>
+        </div>
+        <div class="word-item" data-word="smoothies" data-ipa="/ˈsmuː.ðiːz/" data-definition="Cold drinks made from fruit and often yogurt or milk, blended until smooth.">
+            smoothies
+            <span class="tooltiptext"><span class="ipa">/ˈsmuː.ðiːz/</span>Cold drinks made from fruit and often yogurt or milk, blended until smooth.</span>
+        </div>
+        <div class="word-item" data-word="plan" data-ipa="/plæn/" data-definition="A set of actions decided in advance to achieve something.">
+            plan
+            <span class="tooltiptext"><span class="ipa">/plæn/</span>A set of actions decided in advance to achieve something.</span>
+        </div>
+        <div class="word-item" data-word="crowded" data-ipa="/ˈkraʊ.dɪd/" data-definition="Full of people, leaving little or no space.">
+            crowded
+            <span class="tooltiptext"><span class="ipa">/ˈkraʊ.dɪd/</span>Full of people, leaving little or no space.</span>
+        </div>
+        <div class="word-item" data-word="matches" data-ipa="/ˈmætʃ.ɪz/" data-definition="Games or competitions between two or more people or teams.">
+            matches
+            <span class="tooltiptext"><span class="ipa">/ˈmætʃ.ɪz/</span>Games or competitions between two or more people or teams.</span>
+        </div>
+    </div>
+</div>
+
+    <!-- Practice Section -->
+    <div class="practice-words">
+        <h2>Practice These Words</h2>
+        <ul class="practice-list" id="practice-words-list">
+            <!-- Auto-populated from difficult words -->
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Process difficult words and paragraph
+            const paragraph = document.getElementById('lesson-paragraph');
+            const wordItems = document.querySelectorAll('.word-item');
+            const practiceList = document.getElementById('practice-words-list');
+            const originalParagraphContent = paragraph.innerHTML;
+            
+            // Clear existing practice list items
+            practiceList.innerHTML = '';
+            
+            // Process each difficult word
+            wordItems.forEach(item => {
+                const word = item.dataset.word;
+                const ipa = item.dataset.ipa;
+                const definition = item.dataset.definition;
+                
+                // Add word to practice list
+                const li = document.createElement('li');
+                li.textContent = word;
+                practiceList.appendChild(li);
+                
+                // Create regex pattern that matches the word but not inside HTML tags
+                const regex = new RegExp(`(?<!\\w)(${word})(?!\\w)(?![^<]*>|[^<>]*<\/)`, 'gi');
+                
+                // Replace all instances in the paragraph
+                paragraph.innerHTML = paragraph.innerHTML.replace(regex, 
+                    `<span class="tooltip" data-word="${word.toLowerCase()}">$1<span class="tooltiptext"><span class="ipa">${ipa}</span>${definition}</span></span>`);
+            });
+            
+            // Make sure we don't process words inside HTML tags or already processed words
+            const tooltipWords = document.querySelectorAll('.tooltip');
+            tooltipWords.forEach(tooltip => {
+                tooltip.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
